@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 void main() async {
   runApp(SplashView(
     key: UniqueKey(),
-    onInitializationComplete: () => runApp(ProviderScope(child: MyApp())),
+    onInitializationComplete: () => runApp(const ProviderScope(child: MyApp())),
   ));
 }
 

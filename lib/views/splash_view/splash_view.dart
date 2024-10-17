@@ -1,4 +1,11 @@
+import 'dart:convert';
+
+import 'package:flickflow/data/models/config.dart';
+import 'package:flickflow/services/http_services.dart';
+import 'package:flickflow/services/movie_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 
 class SplashView extends StatefulWidget {
   final VoidCallback onInitializationComplete;
@@ -12,10 +19,25 @@ class SplashView extends StatefulWidget {
 class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 5))
-        .then((value) => widget.onInitializationComplete());
+
+    Future.delayed(Duration(seconds: 5)).then((_) => _setup(context).then(
+          (_) => widget.onInitializationComplete(),
+        ));
+  }
+
+  Future<void> _setup(BuildContext context) async {
+    final getIt = GetIt.instance;
+    final configFile = await rootBundle.loadString("assets/config/main.json");
+    final configData = jsonDecode(configFile);
+    getIt.registerSingleton<AppConfig>(AppConfig(
+      apiKey: configData['API_KEY'],
+      baseApiUrl: configData['BASE_API_URL'],
+      baseImageApiUrl: configData['BASE_IMAGE_API_URL'],
+    ));
+
+    getIt.registerSingleton<HTTPService>(HTTPService());
+    getIt.registerSingleton<MovieService>(MovieService());
   }
 
   @override
